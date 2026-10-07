@@ -1,0 +1,13 @@
+# Pipeline configuration. Each check can be switched on or off and given a
+# global threshold (percent). `overrides` sets a different threshold for a
+# specific ticker; every other ticker keeps the global value. A check that is
+# not listed here is not run.
+checks:
+  day_over_day:
+    enabled: true
+    threshold_pct: 1.0
+    overrides:
+      SP500: 1.5
+  week_over_week:
+    enabled: true
+    threshold_pct: 5.0
