@@ -1,0 +1,11 @@
+# the assessment brief is OnCorps' document, not part of the submission
+brief.pdf
+brief.md
+
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+.DS_Store
