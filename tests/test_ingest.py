@@ -51,6 +51,12 @@ def test_duplicate_dates(tmp_path: Path):
         load_closes(tmp_path)
 
 
+def test_duplicate_date_where_one_row_is_blank(tmp_path: Path):
+    write(tmp_path, "X.csv", "observation_date,X\n2024-01-02,\n2024-01-02,1\n")
+    with pytest.raises(IngestError, match=r"X\.csv: duplicate dates"):
+        load_closes(tmp_path)
+
+
 def test_missing_or_empty_dir(tmp_path: Path):
     with pytest.raises(IngestError, match="no csv files"):
         load_closes(tmp_path)

@@ -34,14 +34,9 @@ def _load_one(path: Path) -> pd.DataFrame:
         raise IngestError(f"{path.name}: expected columns [{DATE_COLUMN}, <TICKER>], got {columns}")
     ticker = columns[1]
     raw.columns = ["date", "close"]
-    # FRED writes market holidays as rows with an empty value.
-    raw = raw[raw["close"].str.strip() != ""]
 
-    close = pd.to_numeric(raw["close"], errors="coerce")
-    if close.isna().any():
-        bad = raw[close.isna()].iloc[0]
-        raise IngestError(f"{path.name}: non-numeric close {bad['close']!r} on {bad['date']}")
-
+    # Validate dates on every row, before dropping blanks, so a date that
+    # appears once empty and once with a value is still caught as a duplicate.
     date = pd.to_datetime(raw["date"], format="%Y-%m-%d", errors="coerce")
     if date.isna().any():
         example = raw.loc[date.isna(), "date"].iloc[0]
@@ -49,5 +44,14 @@ def _load_one(path: Path) -> pd.DataFrame:
     if date.duplicated().any():
         example = date[date.duplicated()].iloc[0].date()
         raise IngestError(f"{path.name}: duplicate dates, e.g. {example}")
+
+    # FRED writes market holidays as rows with an empty value.
+    traded = raw["close"].str.strip() != ""
+    raw, date = raw[traded], date[traded]
+
+    close = pd.to_numeric(raw["close"], errors="coerce")
+    if close.isna().any():
+        bad = raw[close.isna()].iloc[0]
+        raise IngestError(f"{path.name}: non-numeric close {bad['close']!r} on {bad['date']}")
 
     return pd.DataFrame({"date": date.values, "ticker": ticker, "close": close.astype(float).values})
