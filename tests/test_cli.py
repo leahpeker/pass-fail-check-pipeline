@@ -42,3 +42,9 @@ def test_missing_data_dir_exits_1(tmp_path: Path, capsys):
     code = main(["--config", str(ROOT / "config.yaml"), "--data", str(tmp_path / "nope"), "--out", str(tmp_path / "o.csv")])
     assert code == 1
     assert "not a directory" in capsys.readouterr().err
+
+
+def test_unwritable_out_path_exits_1(tmp_path: Path, capsys):
+    code = main(["--config", str(ROOT / "config.yaml"), "--data", str(ROOT / "data"), "--out", str(tmp_path)])
+    assert code == 1
+    assert "error: could not write" in capsys.readouterr().err

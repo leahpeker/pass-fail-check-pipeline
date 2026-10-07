@@ -30,9 +30,13 @@ def main(argv: list[str] | None = None) -> int:
         closes = load_closes(args.data)
         config.validate_tickers(set(closes["ticker"]))
         breaks = run_checks(closes, config)
-        write_breaks(breaks, args.out)
     except (ConfigError, IngestError) as exc:
         print(f"error: {exc}", file=sys.stderr)
+        return 1
+    try:
+        write_breaks(breaks, args.out)
+    except OSError as exc:
+        print(f"error: could not write {args.out}: {exc.strerror or exc}", file=sys.stderr)
         return 1
     print(summarize(breaks, config, args.out))
     return 0

@@ -98,9 +98,10 @@ skipped.
 **Week-over-week** compares each close to the last close on or before the date
 exactly seven days earlier. A Tuesday compares to the previous Tuesday, or to
 the Monday before it if that Tuesday was a holiday. This gives every trading
-day a weekly comparison and keeps the window at seven calendar days rather
-than drifting to eight during holiday weeks. Rows in the first week are
-skipped.
+day a weekly comparison and keeps the window at exactly seven calendar days
+whenever that day traded, falling back to the most recent earlier close when
+it did not; `comparison_date` in the output shows which. Rows in the first
+week are skipped.
 
 Both directions count. `pct_change` is
 `(value - comparison_value) / comparison_value * 100`.
