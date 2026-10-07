@@ -30,6 +30,15 @@ prints a summary:
 
 Run the tests with `uv run pytest`.
 
+Without uv, a plain virtualenv works too:
+
+```bash
+python3 -m venv .venv
+.venv/bin/pip install . pytest
+.venv/bin/pipeline
+.venv/bin/python -m pytest
+```
+
 ## Command line
 
 ```
